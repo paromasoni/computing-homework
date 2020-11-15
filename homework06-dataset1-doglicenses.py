@@ -309,30 +309,40 @@ df3['Animal Third Color'] = df3['Animal Third Color'].fillna('None')
 # In[33]:
 
 
-#df3[df3['Animal Dominant Color'].isin(['Black','White','Grey'])].head()
+df3.loc[(df3['Animal Dominant Color'].str.lower().isin(['black','white','gray', 'none'])) | (df3['Animal Secondary Color'].str.lower().isin(['black','white','grey', 'none'])) | (df3['Animal Third Color'].str.lower().isin(['black','white','grey','none'])),'monochrome'] = True
 
 
-# In[45]:
+# In[34]:
 
 
-df.loc[(df['Animal Dominant Color'].str.lower().isin(['black','white','grey'])) | (df['Animal Secondary Color'].str.lower().isin(['black','white','grey'])) | (df['Animal Third Color'].str.lower().isin(['black','white','grey'])),'monochrome'] = True
+# df3.loc[(df3['Animal Dominant Color'].str.lower().isin(['black','white','grey', 'none'])),'monochrome'] = True 
+# df3.loc[(df3['Animal Secondary Color'].str.lower().isin(['black','white','grey', 'none'])),'monochrome'] = True
+# df3.loc[(df3['Animal Third Color'].str.lower().isin(['black','white','grey','none'])),'monochrome'] = True
 
 
-# In[46]:
+# In[35]:
 
 
-df.loc[(~df['Animal Dominant Color'].str.lower().isin(['black','white','grey'])) | (~df['Animal Secondary Color'].str.lower().isin(['black','white','grey'])) |(~df['Animal Third Color'].str.lower().isin(['black','white','grey'])),'monochrome'] = False
+df3.loc[(~df3['Animal Dominant Color'].str.lower().isin(['black','white','gray','none'])),'monochrome'] = False
+df3.loc[(~df3['Animal Secondary Color'].str.lower().isin(['black','white','gray','none'])),'monochrome'] = False
+df3.loc[(~df3['Animal Third Color'].str.lower().isin(['black','white','gray','none'])),'monochrome'] = False
 
 
-# In[54]:
+# In[36]:
 
 
-df['monochrome'].value_counts()
+df3.head(100)
+
+
+# In[37]:
+
+
+df3['monochrome'].value_counts()
 
 
 # ## How many dogs are in each borough? Plot it in a graph.
 
-# In[55]:
+# In[38]:
 
 
 df3['Primary Breed'].groupby(df3['borough']).count().plot(kind='barh')
@@ -342,14 +352,14 @@ df3['Primary Breed'].groupby(df3['borough']).count().plot(kind='barh')
 # 
 # You’ll need to merge in `population_boro.csv`
 
-# In[56]:
+# In[39]:
 
 
 df4 = pd.read_csv ("boro_population.csv")
 df4.head()
 
 
-# In[57]:
+# In[40]:
 
 
 dogsperborough = df3['Primary Breed'].groupby(df3['borough']).count().to_frame().reset_index()
@@ -357,7 +367,7 @@ dogsperborough = dogsperborough.rename(columns={'Primary Breed': 'no of dogs'})
 dogsperborough
 
 
-# In[58]:
+# In[41]:
 
 
 df5 = dogsperborough.merge(df4, how='left',
@@ -367,7 +377,7 @@ df5 = df5.drop(columns=['area_sqmi'])
 df5.head()
 
 
-# In[59]:
+# In[42]:
 
 
 df5['dogs per capita'] = df5 ['no of dogs'] / df5 ['population'] * 100
@@ -378,13 +388,13 @@ df5.max()
 # 
 # How do you groupby and then only take the top X number? You **really** should ask me, because it's kind of crazy.
 
-# In[ ]:
+# In[43]:
 
 
 #df3.head()
 
 
-# In[60]:
+# In[44]:
 
 
 df3['Primary Breed'].groupby(df3['borough']).value_counts().groupby(level=0).nlargest(5).plot(
@@ -394,7 +404,7 @@ figsize=(10,15))
 
 # ## What percentage of dogs are not guard dogs?
 
-# In[61]:
+# In[45]:
 
 
 df3['Guard or Trained'].value_counts(normalize=True)*100
